@@ -15,6 +15,25 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New user connected');
 
+    var message = {
+        text : 'First message',
+        to : 'User A',
+        from : 'User B'
+    };
+    socket.emit('newMessage', message);
+
+    socket.on('ackNewMessage', (message) => {
+        console.log('Acknowledgement from user' , message);
+    });
+
+    socket.on('createMessage', (message) => {
+        console.log('Message created by user:', message);
+
+        socket.emit('ackCreateMessage', {
+            text: 'Message received by Server'
+        });
+    });
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     })
