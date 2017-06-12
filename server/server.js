@@ -3,6 +3,7 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 const socketIO = require('socket.io');
 const http = require('http');
+const messageUtils = require ('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 
@@ -14,6 +15,9 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
     console.log('New user connected');
+
+    socket.emit('welcomeMessage', messageUtils.generateMessage('Server', 'Greetings! Welcome to the server' ) );
+    socket.broadcast.emit('newUserAlert' , messageUtils.generateMessage('Server', 'New User has joined' ) );
 
     var message = {
         text : 'First message',
@@ -32,6 +36,22 @@ io.on('connection', (socket) => {
         socket.emit('ackCreateMessage', {
             text: 'Message received by Server'
         });
+    });
+
+    socket.on('createBroadcastMessage', (message) => {
+        console.log('Broadcast Message created by user:', message);
+
+        socket.emit('ackCreateBroadcastMessage', {
+            text: 'Broadcast Message received by Server'
+        });
+
+        // io.emit('broadCastMessage' , {message});
+
+        socket.broadcast.emit('broadCastMessage' , {message});
+    });
+
+    socket.on('ackBroadCastMessage', (message) => {
+        console.log('Acknowledgement of broadcast from user' , message);
     });
 
     socket.on('disconnect', () => {
