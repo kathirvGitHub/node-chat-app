@@ -6,4 +6,12 @@ var generateMessage = (from, text) => {
     }
 }
 
-module.exports = {generateMessage}
+var generateLocationMessage = (from, lat, long) => {
+    return {
+        from,
+        URL : `https://www.google.be/maps/search/${lat},${long}`,
+        createdAt : new Date().getTime()
+    }
+}
+
+module.exports = {generateMessage, generateLocationMessage}
