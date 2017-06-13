@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     //     });
     // });
 
-    socket.on('createBroadcastMessage', (message) => {
+    socket.on('createBroadcastMessage', (message, callback) => {
         console.log('Broadcast Message created by user:', message);
 
         // socket.emit('ackCreateBroadcastMessage', {
@@ -50,7 +50,10 @@ io.on('connection', (socket) => {
 
         // io.emit('broadCastMessage' , {message});
 
-        socket.broadcast.emit('broadCastMessage' , messageUtils.generateMessage(message.from, message.text ));
+        // socket.broadcast.emit('broadCastMessage' , messageUtils.generateMessage(message.from, message.text ));
+
+        io.emit('broadCastMessage' , messageUtils.generateMessage(message.from, message.text ));
+        callback();
     });
 
     // socket.on('ackBroadCastMessage', (message) => {
@@ -65,7 +68,9 @@ io.on('connection', (socket) => {
     socket.on('createLocationMessage', (coords) => {        
 
         // socket.broadcast.emit('broadCastMessage' , messageUtils.generateMessage('User', `${coords.latitude} , ${coords.longitude}` ));
-        socket.broadcast.emit('newLocationMessage' , messageUtils.generateLocationMessage('User', coords.latitude , coords.longitude ));
+        // socket.broadcast.emit('newLocationMessage' , messageUtils.generateLocationMessage('User', coords.latitude , coords.longitude ));
+
+        io.emit('newLocationMessage' , messageUtils.generateLocationMessage('User', coords.latitude , coords.longitude ));
     });
 
     socket.on('disconnect', () => {
